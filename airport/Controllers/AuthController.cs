@@ -1,5 +1,6 @@
 ﻿using airport.Models.Dto;
 using airport.Models.Response;
+using airport.Services;
 using airport.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,8 +14,8 @@ namespace airport.Controllers
     public class AuthController : ControllerBase
     {
 
-        private readonly IAuthService _authService;
-        public AuthController(IAuthService authService)
+        private readonly AuthService _authService;
+        public AuthController(AuthService authService)
         {
             _authService = authService;
         }
@@ -51,23 +52,16 @@ namespace airport.Controllers
         {
             var response = new Response();
             response.Success = false;
-            try
-            {
-                var isAuth = await _authService.authenticateUser(loginDto);
-                response.Success = true;
-                response.Message = "Usuario autenticado";
-                response.Data = isAuth;
-            }
-            catch (ArgumentException ex)
-            {
-                response.Message = ex.Message;
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-            return Ok(response);
+                var isAuth = await _authService.AuthenticateUser(loginDto);
+                if (isAuth.IsSuccess)
+                {
+                    response.Success = true;
+                    response.Message = "Usuario autenticado";
+                    response.Data = isAuth.Value;
+                    return Ok(response);
+                }
+
+                return BadRequest(isAuth.Error);            
         }
     }
 }

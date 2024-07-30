@@ -16,7 +16,7 @@ builder.Services.AddDbContext<AirportContext>(options => options.UseSqlServer(co
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddSingleton<Utilities>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IFlightService, FlightService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
